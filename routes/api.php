@@ -65,7 +65,10 @@ Route::apiResource('changeStu','ChangerStuInformController')->middleware(CrossHt
 Route::apiResource('changeTea','ChangerTeaInformController')->middleware(CrossHttp::class);
 Route::apiResource('changeMan','ChangeManInformController')->middleware(CrossHttp::class);
 Route::apiResource('BatchInput','UploadController')->middleware(CrossHttp::class);
-Route::apiResource('UpPhoto','UpPhotoController')->middleware(CrossHttp::class);
+Route::apiResource('UpPhotoTea','UpPhotoTeaController')->middleware(CrossHttp::class);
+Route::apiResource('UpPhotoStu','UpPhotoStuController')->middleware(CrossHttp::class);
+Route::apiResource('UpPhotoMan','UpPhotoManController')->middleware(CrossHttp::class);
+
 
 
 
