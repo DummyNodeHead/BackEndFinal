@@ -65,10 +65,7 @@ Route::apiResource('changeStu','ChangerStuInformController')->middleware(CrossHt
 Route::apiResource('changeTea','ChangerTeaInformController')->middleware(CrossHttp::class);
 Route::apiResource('changeMan','ChangeManInformController')->middleware(CrossHttp::class);
 Route::apiResource('BatchInput','UploadController')->middleware(CrossHttp::class);
-Route::apiResource('UpPhotoTea','UpPhotoTeaController')->middleware(CrossHttp::class);
-Route::apiResource('UpPhotoStu','UpPhotoStuController')->middleware(CrossHttp::class);
-Route::apiResource('UpPhotoMan','UpPhotoManController')->middleware(CrossHttp::class);
-
+Route::apiResource('UpPhoto','UpPhotoController')->middleware(CrossHttp::class);
 
 
 
@@ -77,6 +74,7 @@ use App\Http\Controllers\QuizController;
 use App\Http\Controllers\SourceController;
 use App\Http\Controllers\TSourceController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\GradeController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -98,17 +96,32 @@ Route::get('/Quiz',[QuizController::class, 'showQuiz']);
 Route::get('/Grade',[QuizController::class, 'showGrade']);
 Route::get('/Studentanalysis',[QuizController::class, 'showStudentAnalysisScore']);
 Route::get('/Quizanalysis',[QuizController::class, 'showQuizAnalysisScore']);
+Route::get('/ManageGetQuizList',[QuizController::class, 'ManageGetList']);
 Route::get('/TQuiz',[QuizController::class, 'showStudentQuiz']);
 //Route::get('/Analysischarts',[QuizController::class,'showAnalysisChart']);
 Route::get('/AllCourse',[CourseController::class, 'showAllCourse']);
-Route::get('/CourseResource',[TSourceController::class,'showCourseResource']);
-Route::get('/TCourseResource',[TSourceController::class,'showTeacherCourseResource']);
+Route::get('/StudentCourseResource',[TSourceController::class,'showCourseResource']);
+Route::get('/TeacherCourseResource',[TSourceController::class,'showTeacherCourseResource']);
+Route::get('/CourseDownloadResource',[TSourceController::class,'DownloadResource']);
+Route::post('/TeacherUpload',[TSourceController::class,'TeacherUpload']);
 
-Route::get('/PersonalResource',[SourceController::class,'showPersonalResource']);
-Route::get('/TPersonalResource',[SourceController::class,'showTeacherPersonalResource']);
+Route::get('/StudentPersonalResource',[SourceController::class,'StudentPersonalResource']);
+Route::get('/StudentPersonalDownloadResource',[SourceController::class,'StudentDownloadPersonalResource']);
+Route::post('/StudentPersonalUploadResource',[SourceController::class,'StudentUploadImage']);
+
+Route::get('/TeacherPersonalResource',[SourceController::class,'TeacherPersonalResource']);
+Route::get('/TeacherPersonalDownloadResource',[SourceController::class,'TeacherDownloadPersonalResource']);
+Route::post('/TeacherPersonalUploadResource',[SourceController::class,'TeacherUploadImage']);
+
+Route::get('/GetGradeInfo',[GradeController::class,'getInfo']);
+
+Route::get('/GetTeacherAssignmentList',[AssignmentController::class,'TeacherGetList']);
+Route::get('/GetAssignmentList',[AssignmentController::class,'GetList']);
+Route::get('/TeacherAssignmentDownloadResource',[AssignmentController::class,'DownloadResource']);
+Route::post('/StudentUploadAssignment',[AssignmentController::class,'StudentUploadAssignment']);
 
 //post 
-Route::post('/addAssignment',[AssignmentController::class, 'store']);
+//Route::post('/addAssignment',[AssignmentController::class, 'store']);
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

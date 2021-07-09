@@ -67,7 +67,13 @@ Route::post('/CourseManagementSearch','ManualClassManagerController@searchManage
 
 Route::post('/ScheduleSearch', 'ManualClassManagerController@SearchSchedule');
 
-
+Route::post('/StudentPersonalDeleteResource', 'SourceController@StudentDeletePersonalResource');
+Route::post('/TeacherPersonalDeleteResource', 'SourceController@TeacherDeletePersonalResource');
+Route::post('/AssignmentAdd','AssignmentController@AssignmentAdd');
+Route::post('/UpdateScore','QuizController@updateScore');
+Route::post('/UpdateApplicationState', 'QuizController@updateApplicationState');
+Route::post('/ApplicationScore','QuizController@applicationScore');
+Route::post('/TeacherDeleteCourseResource', 'TSourceController@TeacherDeleteCourseResource');
 
 use App\Models\Exam;
 

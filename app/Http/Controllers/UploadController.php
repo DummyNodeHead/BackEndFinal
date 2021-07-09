@@ -37,7 +37,7 @@ class UploadController extends BaseController
                         'id' => $arr['id'],
                         'name' => $arr['name'],
                         'class' => $arr['class'],
-                        'school' => $arr['department'],
+                        'department' => $arr['department'],
                         'major' => $arr['major'],
                         'sex' => $arr['sex'],
                         'IDCardNum' => $arr['IDCardNum'],
@@ -48,11 +48,30 @@ class UploadController extends BaseController
                         'PSW' => $arr['PSW'],
                         'type' => $arr['type'],
                     ];
-                    
-                        Account::insert($acc);
+                    $v = Validator::make($acc, [
+                        'id' => 'required|min:8|max:10',
+                        'PSW'=>'required|min:6|max:15',
+                        'type'=>'required|min:1|max:3'
+                    ]);
+                    $u = Validator::make($stu, [
+                        'id' => 'required|min:8|max:10',
+                        'name' => 'required|max:20',
+                        'class' => 'required|max:20',
+                        'department' => 'required|max:30',
+                        'major' => 'required|max:20',
+                        'IDCardNum' => 'required|min:18|max:18',
+
+                    ]);
+                    if (!$v->fails()&&!$u->fails())
+                    {
+                        Acount::insert($acc);
                         Student::insert($stu);
                         $j=$j+1;
-                    
+                    }
+                    else
+                    {
+                        
+                    }
                 }
                 //teacher
                 if ($arr['type']== 2){
@@ -69,12 +88,27 @@ class UploadController extends BaseController
                         'PSW' => $arr['PSW'],
                         'type' => $arr['type'],
                     ];
-
-
-                        Account::insert($acc);
+                    $v = Validator::make($acc, [
+                        'id' => 'required|min:8|max:10',
+                        'PSW'=>'',
+                        'type'=>''
+                    ]);
+                    $u = Validator::make($tea, [
+                        'id' => 'required|min:8|max:10',
+                        'name' => 'required|max:20',
+                        'department' => 'required|max:30',
+                        'IDCardNum' => 'required|min:18|max:18',
+                    ]);
+                    if (!$v->fails()&&!$u->fails())
+                    {
+                        Acount::insert($acc);
                         Teacher::insert($stu);
                         $j=$j+1;
-
+                    }
+                    else
+                    {
+                       
+                    }
                 }
                 //manager
                 if ($arr['type']== 3){
@@ -91,10 +125,28 @@ class UploadController extends BaseController
                         'PSW' => $arr['PSW'],
                         'type' => $arr['type'],
                     ];
-
-                        Account::insert($acc);
+                    $v = Validator::make($acc, [
+                        'id' => 'required|min:8|max:10',
+                        'PSW'=>'',
+                        'type'=>''
+                    ]);
+                    $u = Validator::make($man, [
+                        'id' => 'required|min:8|max:10',
+                        'name' => 'required|max:20',
+                        'department' => 'required|max:30',
+                        'id_card' => 'required|min:18|max:18',
+                        'IDCardNum' => 'required|min:18|max:18',
+                    ]);
+                    if (!$v->fails()&&!$u->fails())
+                    {
+                        Acount::insert($acc);
                         Manager::insert($stu);
                         $j=$j+1;
+                    }
+                    else
+                    {
+
+                    }
                 }    
         }
 
