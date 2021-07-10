@@ -91,7 +91,7 @@ use App\Http\Controllers\AnswerPaperController;
 |
 */
 
-Route::get('/exam/create/{paper_id}/{course_id}/{teacher_id}/{start_time}/{end_time}/{state}', [ExamController::class, 'create']);
+Route::get('/exam/create/{paper_id}/{course_id}/{teacher_id}/{exam_name}/{start_time}/{end_time}/{state}', [ExamController::class, 'create']);
 
 Route::get('exam/delete/{exam_id}', [ExamController::class, 'delete']);
 
@@ -136,15 +136,8 @@ Route::get('/delete_test_paper_judge_question/{paper_id}/{choose_id?}','Selectta
 
 Route::get('/count');
 
-
-
-
-
-
-
 Route::get('/addanswerchoose/{paper_id}/{exam_id}/{student_id}/{choose_id}/{choose_answer}/{score}','AnswerPaperController@add_choose');
 Route::get('/addanswerjudge/{paper_id}/{exam_id}/{student_id}/{judge_id}/{judge_answer}/{score}','AnswerPaperController@add_judge');
-
 
 
 Route::get('/exammodifystate/{exam_id}', [ExamController::class, 'modifyexamstate']);
