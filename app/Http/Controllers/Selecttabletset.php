@@ -182,7 +182,7 @@ class Selecttabletset extends Controller
 
 
     public function showtestpaperchoosequestionbyid($paper_id=''){
-        $showall=DB::select('select choose_id from Test_paper_choose_question where paper_id=:coi',['coi'=>$paper_id] );
+        $showall=DB::select('select *from Choose_questions where choose_id in (select choose_id from Test_paper_choose_question where paper_id=:coi)',['coi'=>$paper_id] );
         return $showall;
      }
 
@@ -205,7 +205,7 @@ class Selecttabletset extends Controller
 
 
     public function showtestpaperjudgequestionbyid($paper_id=''){
-        $showall=DB::select('select judge_id from Test_paper_judge_question where paper_id=:coi',['coi'=>$paper_id] );
+        $showall=DB::select('select * from Judge_questions where judge_id in (select judge_id from Test_paper_judge_question where paper_id=:coi)',['coi'=>$paper_id] );
         return $showall;
      }
 
@@ -240,75 +240,72 @@ class Selecttabletset extends Controller
         // 成功则返回试卷id
         // get judge questions randomly
         $rand_judge = $judge_num/$judge_crt_num + 0.1;
-        $judge_ids = DB::raw('select judge_id from judge_questions where course_id = ? and RAND() <= ? limit ?',
+        $judge_ids = DB::select('select judge_id from judge_questions where course_id = ? and RAND() <= ? limit ?',
             [$course_id, $rand_judge, $judge_num]);
         $rand_choose = $choose_num/$choose_crt_num + 0.1;
-        $choose_ids = DB::raw('select choose_id from choose_questions where course_id = ? and RAND() <= ? limit ?',
+        $choose_ids = DB::select('select choose_id from choose_questions where course_id = ? and RAND() <= ? limit ?',
             [$course_id, $rand_choose, $choose_num]);
         // 循环插入试卷
-        DB::insert('insert into test_paper(course_id, teacher_id, $paper_name) values(?,?,?)', [$course_id, $teacher_id, $paper_name]);
-        $paper_id = DB::raw('select max(paper_id) from test_paper');
-        $fullmark = 0;
+        DB::insert('insert into test_paper(course_id, teacher_id, paper_name, fullmark) values(?,?,?,?)', [$course_id, $teacher_id, $paper_name, 0]);
+        $paper_id = DB::select('select max(paper_id) as pi from test_paper');
+        $fullmark = DB::table('test_paper')->where('paper_id', $paper_id[0]->pi)->value('fullmark');
         foreach($judge_ids as $judge_id) {
-            $fullmark += DB::table('judge_questions')->where('judge_id', $judge_id)->value('value');
-            DB::insert('insert into test_paper_judge_question(paper_id, judge_id) values(?, ?)', [$paper_id, $judge_id]);
+            $fullmark += DB::table('judge_questions')->where('judge_id', $judge_id->judge_id)->value('value');
+        //    DB::insert('insert into test_paper_judge_question(paper_id, judge_id) values(?, ?)', [$paper_id[0]->pi, $judge_id->judge_id]);
+            DB::table('test_paper_judge_question')->insert([
+                [
+                    'paper_id' => $paper_id[0]->pi,
+                    'judge_id' => $judge_id->judge_id
+                ]
+                ]);
         }
         foreach($choose_ids as $choose_id) {
-            $fullmark += DB::table('choose_questions')->where('choose_id', $choose_id)->value('value');
-            DB::insert('insert into test_paper_choose_question(paper_id, choose_id) values(?, ?)', [$paper_id, $choose_id]);
+            $fullmark += DB::table('choose_questions')->where('choose_id', $choose_id->choose_id)->value('value');
+          //  DB::insert('insert into test_paper_choose_question(paper_id, choose_id) values(?, ?)', [$paper_id[0]->pi, $choose_id->choose_id]);
+            DB::table('test_paper_choose_question')->insert([
+                [
+                    'paper_id' => $paper_id[0]->pi,
+                    'choose_id' => $choose_id->choose_id
+                ]
+                ]);
         }
-        DB::update('update test_paper set fullmark = ? where paper_id = ?', [$fullmark, $paper_id]);
+        DB::update('update test_paper set fullmark = ? where paper_id = ?', [$fullmark, $paper_id[0]->pi]);
         return $paper_id;
     }
 
-    // * 增加查找函数
-    // todo: 是不是头文件需要增加 为什么不能调用class里面的函数
-    public function search($course_name) {
-        // get course_ids
-        $course_ids = DB::raw('select ID from course where name like ?', [$course_name]);
-        foreach($course_ids as $course_id) {
-            // show items
-            showchoosequesbycid($course_id);
-            showJudgequesbycid($course_id);
-        }
-    }
-    // * 接收文件
-    // public function scale_add($file) {
-    //     return $file;
-    // }
-
 
     public function edit_judge($judge_id, $stem, $value, $answer) {
-        DB::raw('update judge_questions set stem=?, value=?, correcnt_answer=? where judge_id=?',
+        DB::update('update judge_questions set stem=?, value=?, correct_answer=? where judge_id=?',
         [$stem, $value, $answer,$judge_id]);
     }
     public function edit_choose($choose_id, $stem, $value, $optionA, $optionB, $optionC, $optionD, $answer) {
-        DB::raw('update choose_questions set stem=?, value=?, optionA=?, optionB=?, optionC=?, optionD=?, correcnt_answer=? where choose_id=?',
+        DB::update('update choose_questions set stem=?, value=?, optionA=?, optionB=?, optionC=?, optionD=?, correct_answer=? where choose_id=?',
         [$stem, $value, $optionA, $optionB, $optionC, $optionD, $answer,$choose_id]);
     }
 
 
     public function search_judge($course_name) {
         // get course_ids
-        $course_ids = DB::select('select ID from course where name like ? or ID like ?', [$course_name, $course_name]);
-        $showall_judges = DB::select('select * from judge_questions where judge_id = :ji or stem like :ci', ['ji'=>$course_name, 'ci'=>$course_name]);
+        $course_ids = DB::select('select ID from course where name like ?', ['%'.$course_name.'%']);
+        $showall_judges = DB::table('judge_questions')
+                        ->where('course_id', $course_name)
+                        ->orwhere('stem','like', '%'.$course_name.'%')
+                        ->get();
         foreach($course_ids as $course_id) {
-             // show items
-            $course_id="%".$course_id."%";
-            $showall_judges += DB::select('select * from Judge_questions where course_id like :coi',['coi'=>$course_id] );
+            $showall_judges = $showall_judges->union(DB::table('judge_questions')->where('course_id', $course_id->ID)->get());
         }
         return $showall_judges;
     }
     public function search_choose($course_name) {
         // get course_ids
-        $course_ids = DB::select('select ID from course where name like ? or ID like ?', [$course_name, $course_name]);
-        $showall_chooses = DB::select('select * from choose_questions where choose_id = :ci or stem like :stem', ['ci'=>$course_name, 'stem'=>$course_name]);
+        $course_ids = DB::select('select ID from course where name like ?', ['%'.$course_name.'%']);
+        $showall_chooses = DB::table('choose_questions')
+                        ->where('course_id', $course_name)
+                        ->orwhere('stem','like', '%'.$course_name.'%')
+                        ->get();
         foreach($course_ids as $course_id) {
-            // show items
-            $course_id="%".$course_id."%";
-            $showall_chooses += DB::select('select * from choose_questions where course_id=:coi',['coi'=>$course_id] );
+            $showall_chooses = $showall_chooses->union(DB::table('choose_questions')->where('course_id', $course_id->ID)->get());
         }
-        
         return $showall_chooses;
     }
 }
