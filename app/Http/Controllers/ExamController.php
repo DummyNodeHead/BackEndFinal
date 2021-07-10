@@ -8,14 +8,14 @@ use function PHPUnit\Framework\countOf;
 
 class ExamController extends Controller
 {
-    public function create($paper_id, $course_id, $teacher_id, $start_time, $end_time, $state) {
+    public function create($paper_id, $course_id, $teacher_id,$exam_name, $start_time, $end_time, $state) {
         $fullmark = DB::table('test_paper')
                     ->where('paper_id',$paper_id)
                     ->value('fullmark');
 
         $insert = 0;
-        $insert += DB::insert('insert into exam_identity(paper_id, course_id, teacher_id, start_time, end_time, state, fullmark, publish) values( ?, ?, ?, ?, ?, ?, ?, ?)'
-                 ,[$paper_id, $course_id, $teacher_id, $start_time, $end_time, $state, $fullmark, 0]);
+        $insert += DB::insert('insert into exam_identity(paper_id, course_id, teacher_id, start_time, end_time, state, fullmark, publish, exam_name) values( ?, ?, ?, ?, ?, ?, ?, ?,?)'
+                 ,[$paper_id, $course_id, $teacher_id, $start_time, $end_time, $state, $fullmark, 0, $exam_name]);
 
         $exam_id = DB::table('exam_identity')->where("paper_id", $paper_id)
                     ->where('course_id', $course_id)->where('start_time', $start_time)->value('exam_id');
@@ -42,7 +42,8 @@ class ExamController extends Controller
         return $select;
     }
     public function queryexamstu($stu_id) {
-        $select = DB::select('select exam_id from Exam_student where student_id = ?', [$stu_id]);
+        $select = DB::select('select * from Exam_identity where exam_id in (select exam_id from Exam_student where student_id = ?)', [$stu_id]);
+        
         return $select;
     }
     public function queryexamtea($tea_id) {
