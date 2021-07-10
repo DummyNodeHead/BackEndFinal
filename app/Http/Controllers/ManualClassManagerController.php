@@ -75,6 +75,11 @@ class ManualClassManagerController extends BaseController
             array_push($Time1, $t);
         }
 
+        //检测课时是否正确
+        if(count($Time0) != count($Time1)){
+            return $this->fail("1007","");
+        }
+
         $flag = 0;
         //判断老师名称是否修改
         if($Teacher_name0 != $Teacher_name1){
@@ -93,13 +98,17 @@ class ManualClassManagerController extends BaseController
                 return $this->fail("3004","");
             }
         }
-//        $test = array();
-        //判断时间是否修改
-        if($time0 != $time1){
-            $flag = 1;
-            //还需要判断当前时间是否合法
-        }
 
+        //判断时间是否修改
+//        if($time0 != $time1){
+//            $flag = 1;
+//        }
+        for($i = 0; $i < count($time0); $i++){
+            if($time0[$i] != $time1[$i]){
+                $flag = 1;
+                break;
+            }
+        }
         //如果修改
         if($flag){
             $mark = 0;
@@ -107,12 +116,13 @@ class ManualClassManagerController extends BaseController
             foreach($Time0 as $value){
                 $obj->DeleteSchedule($Course_id, $Teacher_id0, $Classroom_id0, $value);
             }
-            //判断修改后教室时间是否冲突
+            //判断修改后教室/教师时间是否冲突
             foreach($Time1 as $value){
                 if($obj->IsScheduleConflict_Classroom($Classroom_id1, $value)){
                     $mark = 1;
                     break;
                 }
+
                 if($obj->IsScheduleConflict_Teacher($Teacher_id1, $value)){
                     $mark = 2;
                     break;
@@ -127,6 +137,7 @@ class ManualClassManagerController extends BaseController
                 else
                     return $this->fail("2005","");
             }
+            //插入新的schedule
             else{
                 foreach($Time1 as $value){
                     $obj->InsertSchedule($Course_id, $Teacher_id1, $Classroom_id1, $value);
@@ -420,6 +431,15 @@ class ManualClassManagerController extends BaseController
         $time = "时间:" . $this->time_to_str($arr[4]) . ';';
         $Classroom_name = "教室:" . $arr[5] . ' ' . $arr[6];
         return $Class_id . $Class_name . $credit . $Teacher_name . $time . $Classroom_name;
+    }
+
+    //显示教师本人课表
+    public function ShowTeacherCourseTable(){
+        $teacher_id = props.location.username;
+//        $teacher_id = "2190100130";
+        $obj = new DatabaseController();
+        $data = $obj->TeacheridSearch($teacher_id);
+        return $this->success($this->table_to_schedule($data));
     }
 }
 

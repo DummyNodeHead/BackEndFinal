@@ -9,7 +9,8 @@ class ViewResult extends Controller
 {
     //
     public function viewResult($stu_id){
-        $query = "select name,time,day from course_select,course where course.ID = course_select.Course_id and course_select.Student_id=".$stu_id;
+        $query = "select name,time,day from course_select,course where course.ID = course_select.Course_id and course_select.Student_id='".$stu_id;
+        $query .= "'";
         $list = DB::select($query);
 
         return $list;
