@@ -24,13 +24,13 @@ class LoginController extends BaseController
         {
             return $this->create([],'id错误',400);
         }
-        if($input['PSW']!=$user->PSW)
+        if($input['PSW']==$user->PSW&&$input['type']==$user->type)
         {
-            return $this->create([],'密码错误',400);
+            return $this->create([],'登陆成功',200);
         }
         else
         {
-            return $this->create([],'登录成功',200);
+            return $this->create([],'密码错误',400);
         }
   
     }
