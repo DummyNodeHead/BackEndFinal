@@ -435,8 +435,7 @@ class ManualClassManagerController extends BaseController
 
     //显示教师本人课表
     public function ShowTeacherCourseTable(){
-        $teacher_id = props.location.username;
-//        $teacher_id = "2190100130";
+        $teacher_id = request()->input('id');
         $obj = new DatabaseController();
         $data = $obj->TeacheridSearch($teacher_id);
         return $this->success($this->table_to_schedule($data));

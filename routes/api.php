@@ -77,6 +77,7 @@ use App\Http\Controllers\QuizController;
 use App\Http\Controllers\SourceController;
 use App\Http\Controllers\TSourceController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\CourseController2;
 use App\Http\Controllers\GradeController;
 /*
 |--------------------------------------------------------------------------
@@ -102,7 +103,7 @@ Route::get('/Quizanalysis',[QuizController::class, 'showQuizAnalysisScore']);
 Route::get('/ManageGetQuizList',[QuizController::class, 'ManageGetList']);
 Route::get('/TQuiz',[QuizController::class, 'showStudentQuiz']);
 //Route::get('/Analysischarts',[QuizController::class,'showAnalysisChart']);
-Route::get('/AllCourse',[CourseController::class, 'showAllCourse']);
+Route::get('/AllCourse',[CourseController2::class, 'showAllCourse']);
 Route::get('/StudentCourseResource',[TSourceController::class,'showCourseResource']);
 Route::get('/TeacherCourseResource',[TSourceController::class,'showTeacherCourseResource']);
 Route::get('/CourseDownloadResource',[TSourceController::class,'DownloadResource']);
