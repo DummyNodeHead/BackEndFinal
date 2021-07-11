@@ -81,7 +81,7 @@ use App\Models\Exam;
 
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\AnswerPaperController;
-
+use App\Http\Controllers\FileUploadController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes

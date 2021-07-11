@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class FileUpload extends Controller
+class FileUploadController extends Controller
 {
     public function scale_add_judge($course_id, $teacher_id, $type, $stem, $value, $correct_answer) {
         DB::table('Judge_questions')->insert([
