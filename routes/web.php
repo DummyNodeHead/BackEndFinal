@@ -48,7 +48,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DatabaseController;
 use App\Http\Controllers\autoManagementController;
 use App\Http\Controllers\ManualClassManagerController;
-Route::get('/AutoCourseManagement', 'AutoManagementController@classManagement');
+
 Route::post('/ClassroomDisplay', 'ClassroomController@DisplayClassroom');
 
 Route::post('/ClassroomAdd', 'ClassroomController@CreateClassroom');
@@ -66,6 +66,8 @@ Route::post('/CourseManagementModify', 'ManualClassManagerController@ManualManag
 Route::post('/CourseManagementSearch','ManualClassManagerController@searchManagement');
 
 Route::post('/ScheduleSearch', 'ManualClassManagerController@SearchSchedule');
+
+Route::post('/TeacherCourseTable', 'ManualClassManagerController@ShowTeacherCourseTable');
 
 Route::post('/StudentPersonalDeleteResource', 'SourceController@StudentDeletePersonalResource');
 Route::post('/TeacherPersonalDeleteResource', 'SourceController@TeacherDeletePersonalResource');
